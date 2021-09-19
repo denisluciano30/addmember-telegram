@@ -6,6 +6,7 @@ from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecen
     UserStatusLastWeek
 import json
 from datetime import datetime, timedelta
+import time
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -113,3 +114,6 @@ for account in accounts:
     phone = account['phone']
     print(phone)
     get_group(phone, api_id, api_hash)
+    
+    # Alteração
+    # time.sleep(15)
