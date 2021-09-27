@@ -26,7 +26,6 @@ def get_data_group(client, phone):
     chats = []
     last_date = None
     chunk_size = 200
-    groups = []
 
     query = client(GetDialogsRequest(
         offset_date=last_date,
@@ -35,43 +34,26 @@ def get_data_group(client, phone):
         limit=chunk_size,
         hash=0
     ))
-    chats.extend(query.chats)
-    for chat in chats:
-        try:
-            if chat.megagroup is not None and chat.access_hash is not None:
-                groups.append(chat)
-        except:
-            continue
 
-    results = []
-    for group in groups:
-        try:
-            tmp = {
-                'group_id': str(group.id),
-                'access_hash': str(group.access_hash),
-                'title': str(group.title),
-            }
-            results.append(tmp)
+    with open('config.json', 'r', encoding='utf-8') as f:
+        config = json.loads(f.read())
 
-            if group.megagroup == True:
-                get_data_user(client, group)
-        except Exception as e:
-            print(e)
-            print('error save group')
-    with open('data/group/' + phone + '.json', 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
+    # group target
+    group_target_id = config['group_target']
+    # group source
+    group_source_id = config['group_source']
+
+    get_data_user(client, group_source_id)
 
 
-def get_data_user(client, group):
-    group_id = str(group.id)
-    print(group_id)
+def get_data_user(client, group_id):
 
-    all_participants = client.get_participants(group, aggressive=True)
+    all_participants = client.get_participants(group_id, aggressive=True)
     results = []
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
-    path_file = 'data/user/' + phone + "_" + group_id + '.json'
+    path_file = 'data/user/' + phone + "_" + str(group_id) + '.json'
 
     for user in all_participants:
         # print(user)
@@ -114,6 +96,3 @@ for account in accounts:
     phone = account['phone']
     print(phone)
     get_group(phone, api_id, api_hash)
-    
-    # Alteração
-    # time.sleep(15)

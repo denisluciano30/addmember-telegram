@@ -44,7 +44,17 @@ Copy file config.json from config.example.json
 
 ![Init session](images/step1.png)
 
-* Step 4: run `python get_data.py` to get data of group, data user and save file in folder `data`
+* Step 4: run `python get_groups.py` to get data of groups
+
+Esse passo será para obter o nome dos grupos para cada account. O objetivo é não ler os os users para todos os grupos, pois está demorando muito tempo.
+
+Após esse passo já defina os grupos target e source, pois só será obtido os usuários deles
+```
+	"group_target": id aqui, -> seu grupo
+	"group_source": id aqui, -> de qual vai pegar os membros
+```
+
+* Step 5: run `python get_data.py` to get data of user and save file in folder `group`
 
 ![Get data](images/step2.png)
 ![Data after Get](images/data_step2.png)
@@ -61,7 +71,8 @@ Note: Use username have also use to add member, but something use not have usern
 
 After run get data, check again file in data/group and edit file config to change group_target, group_source, which you want to add.
 
-* Step 5: run `python add_member.py` to add member from `group_source` to `group_target`
+
+* Step 6: run `python add_member.py` to add member from `group_source` to `group_target`
 Logic: 
 	* after add 1 member, sleep 2 minutes
 	* each account add 35 member --> sleep 15 minutes
