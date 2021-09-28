@@ -56,8 +56,14 @@ def get_data_user(client, group_id):
     path_file = 'data/user/' + phone + "_" + str(group_id) + '.json'
 
     for user in all_participants:
-        # print(user)
-        # print(type(user.status))
+
+        if len(user.first_name) <= 2:
+            continue 
+        
+        # Caso vá adicionar para grupos gringos não fazer sentido deixar isso aqui
+        if user.phone != None and user.phone[0:1] != '55':
+            continue
+
         try:
             if isinstance(user.status, UserStatusRecently):
                 date_online_str = 'online'
