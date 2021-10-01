@@ -15,4 +15,5 @@ nomes_list = nomes.tolist()
 
 nomes_sorted = np.sort(nomes_list, kind='quick sort')
 
+
 a = 10
