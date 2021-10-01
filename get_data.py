@@ -64,6 +64,17 @@ def get_data_user(client, group_id):
         if user.phone != None and user.phone[0:1] != '55':
             continue
 
+        #verificando se é um nome que contém na base do ibge
+        tem_nome = 0
+        for nome in nomes:
+            nome_ibge = str(nome['nome'].lower())
+            nome_telegram = str(str(user.first_name).lower())
+            if (nome_telegram.find(nome_ibge)):
+                tem_nome = 1
+                break
+        if tem_nome == 0:
+            continue
+        
         try:
             if isinstance(user.status, UserStatusRecently):
                 date_online_str = 'online'
@@ -80,6 +91,7 @@ def get_data_user(client, group_id):
                 'user_id': str(user.id),
                 'access_hash': str(user.access_hash),
                 'username': str(user.username),
+                'first_name': str(user.first_name),
                 "date_online": date_online_str
             }
             results.append(tmp)
@@ -91,6 +103,12 @@ def get_data_user(client, group_id):
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
+
+# Arquivo com a base de dados BR
+with open('ibge_dados_2010.json', 'r', encoding='utf-8') as f:
+    nomes_ibge_2010 = json.loads(f.read())
+
+nomes = nomes_ibge_2010
 
 accounts = config['accounts']
 
