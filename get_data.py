@@ -7,6 +7,7 @@ from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecen
 import json
 from datetime import datetime, timedelta
 import time
+from unidecode import unidecode
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -38,8 +39,6 @@ def get_data_group(client, phone):
     with open('config.json', 'r', encoding='utf-8') as f:
         config = json.loads(f.read())
 
-    # group target
-    group_target_id = config['group_target']
     # group source
     group_source_id = config['group_source']
 
@@ -54,26 +53,41 @@ def get_data_user(client, group_id):
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
     path_file = 'data/user/' + phone + "_" + str(group_id) + '.json'
+    
 
     for user in all_participants:
 
-        if len(user.first_name) <= 2:
-            continue 
+        # Número mínimo caracteres nome
+        if numero_minimo_caracteres_nome != None:
+            if len(user.first_name) <= numero_minimo_caracteres_nome:
+                continue 
         
         # Caso vá adicionar para grupos gringos não fazer sentido deixar isso aqui
-        if user.phone != None and user.phone[0:1] != '55':
-            continue
+        if apenas_ddd_55:
+            if user.phone != None and user.phone[0:1] != '55':
+                continue
+        
+        # Verificando a última vez online se é >= a data nas configurações
+        # TO-DO (Fazer a checagem por aqui, assim já filtra para não verificar no add)
 
         #verificando se é um nome que contém na base do ibge
-        tem_nome = 0
-        for nome in nomes:
-            nome_ibge = str(nome['nome'].lower())
-            nome_telegram = str(str(user.first_name).lower())
-            if (nome_telegram.find(nome_ibge)):
-                tem_nome = 1
-                break
-        if tem_nome == 0:
-            continue
+        if checar_base_ibge:
+            tem_nome = False
+            for nome in nomes:
+                nome_ibge = str(nome['nome'].lower())
+                nome_telegram = str(str(user.first_name).lower())
+                
+                primeiro_nome_telegram = nome_telegram.strip().split(' ')[0]
+
+                primeiro_nome_telegram_sem_acento = unidecode(primeiro_nome_telegram)
+                nome_ibge_sem_acento = unidecode(nome_ibge)
+                
+                if primeiro_nome_telegram_sem_acento == nome_ibge_sem_acento:
+                    tem_nome = True
+                    break
+            
+            if not tem_nome:
+                continue
         
         try:
             if isinstance(user.status, UserStatusRecently):
@@ -107,8 +121,13 @@ with open('config.json', 'r', encoding='utf-8') as f:
 # Arquivo com a base de dados BR
 with open('ibge_dados_2010.json', 'r', encoding='utf-8') as f:
     nomes_ibge_2010 = json.loads(f.read())
-
 nomes = nomes_ibge_2010
+
+## Parametros do bot
+from_date_active = config['from_date_active']
+checar_base_ibge = config['checar_base_ibge']
+apenas_ddd_55 = config['apenas_ddd_55']
+numero_minimo_caracteres_nome = config['numero_minimo_caracteres_nome']
 
 accounts = config['accounts']
 

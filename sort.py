@@ -6,7 +6,7 @@ import time
 import numpy as np
 
 # Arquivo com a base de dados BR
-with open('ibge.json', 'r', encoding='utf-8') as f:
+with open('ibge_dados_2010_array.json', 'r', encoding='utf-8') as f:
     nomes_ibge_2010 = json.loads(f.read())
 
 nomes = np.array(nomes_ibge_2010)
