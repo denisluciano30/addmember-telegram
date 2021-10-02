@@ -72,21 +72,12 @@ def get_data_user(client, group_id):
 
         #verificando se é um nome que contém na base do ibge
         if checar_base_ibge:
-            tem_nome = False
-            for nome in nomes:
-                nome_ibge = str(nome['nome'].lower())
-                nome_telegram = str(str(user.first_name).lower())
-                
-                primeiro_nome_telegram = nome_telegram.strip().split(' ')[0]
-
-                primeiro_nome_telegram_sem_acento = unidecode(primeiro_nome_telegram)
-                nome_ibge_sem_acento = unidecode(nome_ibge)
-                
-                if primeiro_nome_telegram_sem_acento == nome_ibge_sem_acento:
-                    tem_nome = True
-                    break
             
-            if not tem_nome:
+            nome_telegram = str(str(user.first_name).lower())
+            primeiro_nome_telegram = nome_telegram.strip().split(' ')[0]
+            primeiro_nome_telegram_sem_acento = unidecode(primeiro_nome_telegram)
+            
+            if primeiro_nome_telegram_sem_acento not in nomes_ibge_2010:
                 continue
         
         try:
@@ -119,9 +110,8 @@ with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
 # Arquivo com a base de dados BR
-with open('ibge_dados_2010.json', 'r', encoding='utf-8') as f:
+with open('ibge_dados_2010_array.json', 'r', encoding='utf-8') as f:
     nomes_ibge_2010 = json.loads(f.read())
-nomes = nomes_ibge_2010
 
 ## Parametros do bot
 from_date_active = config['from_date_active']
