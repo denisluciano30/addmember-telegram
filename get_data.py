@@ -2,7 +2,7 @@ from telethon import TelegramClient, connection
 import logging
 from telethon import sync, TelegramClient, events
 from telethon.tl.functions.messages import GetDialogsRequest
-from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
+from telethon.tl.types import Config, InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
     UserStatusLastWeek
 import json
 from datetime import datetime, timedelta
@@ -24,7 +24,6 @@ def get_group(phone, api_id, api_hash):
 
 def get_data_group(client, phone):
     print('getting data ' + phone)
-    chats = []
     last_date = None
     chunk_size = 200
 
@@ -52,7 +51,7 @@ def get_data_user(client, group_id):
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
-    path_file = 'data/user/' + phone + "_" + str(group_id) + '.json'
+    path_file = 'data/base_user/users.json'
     
 
     for user in all_participants:
@@ -106,6 +105,9 @@ def get_data_user(client, group_id):
         json.dump(results, f, indent=4, ensure_ascii=False)
 
 
+
+###### START HERE ######
+
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
@@ -113,19 +115,34 @@ with open('config.json', 'r', encoding='utf-8') as f:
 with open('ibge_dados_2010_array.json', 'r', encoding='utf-8') as f:
     nomes_ibge_2010 = json.loads(f.read())
 
-## Parametros do bot
+# Parametros do bot
 from_date_active = config['from_date_active']
 checar_base_ibge = config['checar_base_ibge']
 apenas_ddd_55 = config['apenas_ddd_55']
 numero_minimo_caracteres_nome = config['numero_minimo_caracteres_nome']
 
+# Obter os usuários de um cliente
+account_to_get_data = config['account_to_get_data']
+
+api_id = account_to_get_data['api_id']
+api_hash = account_to_get_data['api_hash']
+phone = account_to_get_data['phone']
+
+get_group(phone, api_id, api_hash)
+
+
+# Replicar esses dados para todos os clientes
 accounts = config['accounts']
 
-folder_session = 'session/'
+with open('data/base_user/users.json', 'r', encoding='utf-8') as f:
+    data_users = json.loads(f.read())
 
-for account in accounts:
-    api_id = account['api_id']
-    api_hash = account['api_hash']
-    phone = account['phone']
-    print(phone)
-    get_group(phone, api_id, api_hash)
+for acc in accounts:
+
+    phone_acc = acc['phone']
+    group_source_id_acc = config['group_source']
+    
+    path_file_acc = 'data/user/' + phone_acc + "_" + str(group_source_id_acc) + '.json'
+
+    with open(path_file_acc, 'w', encoding='utf-8') as f:
+        json.dump(data_users, f, indent=4, ensure_ascii=False)
