@@ -95,7 +95,7 @@ def get_data_user(client, group_id):
                 'user_id': str(user.id),
                 'access_hash': str(user.access_hash),
                 'username': str(user.username),
-                'first_name': str(user.first_name),
+                #'first_name': str(user.first_name),
                 "date_online": date_online_str
             }
             results.append(tmp)
