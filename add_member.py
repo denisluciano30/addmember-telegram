@@ -3,7 +3,7 @@ from telethon import sync, TelegramClient, events
 from telethon.tl.types import InputPeerChannel
 from telethon.tl.types import InputPeerUser
 from telethon.tl.functions.channels import InviteToChannelRequest
-from telethon.errors.rpcerrorlist import PeerFloodError, UserIdInvalidError, UserInvalidError, UserPrivacyRestrictedError, FloodWaitError
+from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError, FloodWaitError
 import time
 import traceback
 import datetime
@@ -119,14 +119,6 @@ while i < total_user:
         print('sleep 15 minute')
         time.sleep(15 * 60)
 
-    # O que ele faz, é que cada cliente dorme 15 minutos após add 35. Quando está com
-    # muitos clientes, ele add um número muito grande antes de dormir. A mudança feita,
-    # é para ele dormir 15 minutos, após cada cliente add 3 pessoas no grupo
-    # if count_add % (3 * total_client) == (3 * total_client - 1):
-    #     print('sleep 15 minute')
-    #     time.sleep(15 * 60)
-
-
     total_client = filter_clients.__len__()
     print("remain client: " + str(total_client))
     if total_client == 0:
@@ -156,13 +148,8 @@ while i < total_user:
         client(InviteToChannelRequest(target_group_entity, [user_to_add]))
         print('Add member '+ user['user_id'] +' success')
         count_add += 1
-
         print('sleep: ' + str(120 / total_client))
         time.sleep(120 / total_client)
-        
-        # Essa alteração, faz com que ele sempre durma por 120s, independente do número de clientes adicionando
-        # print('sleep: ' + str(120))
-        # time.sleep(120) 
 
     except PeerFloodError as e:
         print("Error Fooling cmnr")
@@ -174,11 +161,7 @@ while i < total_user:
         # not increate i
         continue
     except UserPrivacyRestrictedError:
-        print("Error Privacy") 
-    except UserIdInvalidError as e:
-        print("Error other")
-    except ValueError as e:
-        print("Error other")   
+        print("Error Privacy")
     except:
         print("Error other")
     # break

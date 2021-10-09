@@ -2,12 +2,10 @@ from telethon import TelegramClient, connection
 import logging
 from telethon import sync, TelegramClient, events
 from telethon.tl.functions.messages import GetDialogsRequest
-from telethon.tl.types import Config, InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
+from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
     UserStatusLastWeek
 import json
 from datetime import datetime, timedelta
-import time
-from unidecode import unidecode
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -24,8 +22,10 @@ def get_group(phone, api_id, api_hash):
 
 def get_data_group(client, phone):
     print('getting data ' + phone)
+    chats = []
     last_date = None
     chunk_size = 200
+    groups = []
 
     query = client(GetDialogsRequest(
         offset_date=last_date,
@@ -34,51 +34,47 @@ def get_data_group(client, phone):
         limit=chunk_size,
         hash=0
     ))
+    chats.extend(query.chats)
+    for chat in chats:
+        try:
+            if chat.megagroup is not None and chat.access_hash is not None:
+                groups.append(chat)
+        except:
+            continue
 
-    with open('config.json', 'r', encoding='utf-8') as f:
-        config = json.loads(f.read())
+    results = []
+    for group in groups:
+        try:
+            tmp = {
+                'group_id': str(group.id),
+                'access_hash': str(group.access_hash),
+                'title': str(group.title),
+            }
+            results.append(tmp)
 
-    # group source
-    group_source_id = config['group_source']
+            if group.megagroup == True:
+                get_data_user(client, group)
+        except Exception as e:
+            print(e)
+            print('error save group')
+    with open('data/group/' + phone + '.json', 'w', encoding='utf-8') as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
 
-    get_data_user(client, group_source_id)
 
+def get_data_user(client, group):
+    group_id = str(group.id)
+    print(group_id)
 
-def get_data_user(client, group_id):
-
-    all_participants = client.get_participants(group_id, aggressive=True)
+    all_participants = client.get_participants(group, aggressive=True)
     results = []
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
-    path_file = 'data/base_user/users.json'
-    
+    path_file = 'data/user/' + phone + "_" + group_id + '.json'
 
     for user in all_participants:
-
-        # Número mínimo caracteres nome
-        if numero_minimo_caracteres_nome != None:
-            if len(user.first_name) <= numero_minimo_caracteres_nome:
-                continue 
-        
-        # Caso vá adicionar para grupos gringos não fazer sentido deixar isso aqui
-        if apenas_ddd_55:
-            if user.phone != None and user.phone[0:1] != '55':
-                continue
-        
-        # Verificando a última vez online se é >= a data nas configurações
-        # TO-DO (Fazer a checagem por aqui, assim já filtra para não verificar no add)
-
-        #verificando se é um nome que contém na base do ibge
-        if checar_base_ibge:
-            
-            nome_telegram = str(str(user.first_name).lower())
-            primeiro_nome_telegram = nome_telegram.strip().split(' ')[0]
-            primeiro_nome_telegram_sem_acento = unidecode(primeiro_nome_telegram)
-            
-            if primeiro_nome_telegram_sem_acento not in nomes_ibge_2010:
-                continue
-        
+        # print(user)
+        # print(type(user.status))
         try:
             if isinstance(user.status, UserStatusRecently):
                 date_online_str = 'online'
@@ -95,7 +91,6 @@ def get_data_user(client, group_id):
                 'user_id': str(user.id),
                 'access_hash': str(user.access_hash),
                 'username': str(user.username),
-                #'first_name': str(user.first_name),
                 "date_online": date_online_str
             }
             results.append(tmp)
@@ -105,44 +100,16 @@ def get_data_user(client, group_id):
         json.dump(results, f, indent=4, ensure_ascii=False)
 
 
-
-###### START HERE ######
-
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
-# Arquivo com a base de dados BR
-with open('ibge_dados_2010_array.json', 'r', encoding='utf-8') as f:
-    nomes_ibge_2010 = json.loads(f.read())
-
-# Parametros do bot
-from_date_active = config['from_date_active']
-checar_base_ibge = config['checar_base_ibge']
-apenas_ddd_55 = config['apenas_ddd_55']
-numero_minimo_caracteres_nome = config['numero_minimo_caracteres_nome']
-
-# Obter os usuários de um cliente
-account_to_get_data = config['account_to_get_data']
-
-api_id = account_to_get_data['api_id']
-api_hash = account_to_get_data['api_hash']
-phone = account_to_get_data['phone']
-
-get_group(phone, api_id, api_hash)
-
-
-# Replicar esses dados para todos os clientes
 accounts = config['accounts']
 
-with open('data/base_user/users.json', 'r', encoding='utf-8') as f:
-    data_users = json.loads(f.read())
+folder_session = 'session/'
 
-for acc in accounts:
-
-    phone_acc = acc['phone']
-    group_source_id_acc = config['group_source']
-    
-    path_file_acc = 'data/user/' + phone_acc + "_" + str(group_source_id_acc) + '.json'
-
-    with open(path_file_acc, 'w', encoding='utf-8') as f:
-        json.dump(data_users, f, indent=4, ensure_ascii=False)
+for account in accounts:
+    api_id = account['api_id']
+    api_hash = account['api_hash']
+    phone = account['phone']
+    print(phone)
+    get_group(phone, api_id, api_hash)
