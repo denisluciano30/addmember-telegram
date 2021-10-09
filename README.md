@@ -54,6 +54,13 @@ Após esse passo já defina os grupos target e source, pois só será obtido os 
 	"group_source": id aqui, -> de qual vai pegar os membros
 ```
 
+* Step 3.2 run `python join_groups.py` to join in groups defined in config.py
+ In file config.py define 
+ ```
+	"group_to_join": "link of group that you want to join",
+ ```
+ then run command. To not be strange in group, have 2 minutes delay each iteration
+
 * Step 5: run `python get_data.py` to get data of user and save file in folder `group`
 
 ![Get data](images/step2.png)
