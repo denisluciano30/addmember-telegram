@@ -3,7 +3,7 @@ from telethon import sync, TelegramClient, events
 from telethon.tl.types import InputPeerChannel
 from telethon.tl.types import InputPeerUser
 from telethon.tl.functions.channels import InviteToChannelRequest
-from telethon.errors.rpcerrorlist import PeerFloodError, UserIdInvalidError, UserInvalidError, UserPrivacyRestrictedError, FloodWaitError
+from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError, FloodWaitError
 import time
 import traceback
 import datetime
@@ -174,11 +174,7 @@ while i < total_user:
         # not increate i
         continue
     except UserPrivacyRestrictedError:
-        print("Error Privacy") 
-    except UserIdInvalidError as e:
-        print("Error other")
-    except ValueError as e:
-        print("Error other")   
+        print("Error Privacy")
     except:
         print("Error other")
     # break

@@ -66,19 +66,10 @@ accounts = config['accounts']
 
 folder_session = 'session/'
 
-# Obter os grupos de um único cliente
-account_to_get_data = config['account_to_get_data']
-
-api_id = account_to_get_data['api_id']
-api_hash = account_to_get_data['api_hash']
-phone = account_to_get_data['phone']
-
-get_group(phone, api_id, api_hash)
-
-# for account in accounts:
-#     api_id = account['api_id']
-#     api_hash = account['api_hash']
-#     phone = account['phone']
-#     print(phone)
-#     get_group(phone, api_id, api_hash)
+for account in accounts:
+    api_id = account['api_id']
+    api_hash = account['api_hash']
+    phone = account['phone']
+    print(phone)
+    get_group(phone, api_id, api_hash)
     
