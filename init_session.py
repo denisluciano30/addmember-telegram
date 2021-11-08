@@ -8,7 +8,11 @@ with open('config.json', 'r') as f:
 
 logging.basicConfig(level=logging.WARNING)
 
-accounts = config['accounts']
+with open('numeros.json', 'r', encoding='utf-8') as f:
+    numeros = json.loads(f.read())
+
+indice_account = config['indice_account']
+accounts = numeros['accounts'][indice_account]
 
 folder_session = 'session/'
 

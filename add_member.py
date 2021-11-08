@@ -27,7 +27,11 @@ logging.basicConfig(level=logging.WARNING)
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
-accounts = config['accounts']
+with open('numeros.json', 'r', encoding='utf-8') as f:
+    numeros = json.loads(f.read())
+
+indice_account = config['indice_account']
+accounts = numeros['accounts'][indice_account]
 print("Total account: " + str(len(accounts)))
 folder_session = 'session/'
 

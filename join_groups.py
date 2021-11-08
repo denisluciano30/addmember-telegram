@@ -37,15 +37,16 @@ def join_group(client, phone):
     channel = client.get_entity(group_to_join)
     client(JoinChannelRequest(channel))
 
-    time.sleep(120)
-
+    time.sleep(10)
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
+with open('numeros.json', 'r', encoding='utf-8') as f:
+    numeros = json.loads(f.read())
 
-accounts = config['accounts']
-
+indice_account = config['indice_account']
+accounts = numeros['accounts'][indice_account]
 
 for account in accounts:
     api_id = account['api_id']
