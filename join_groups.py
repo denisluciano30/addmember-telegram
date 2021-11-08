@@ -37,7 +37,9 @@ def join_group(client, phone):
     channel = client.get_entity(group_to_join)
     client(JoinChannelRequest(channel))
 
-    time.sleep(10)
+    time_join_group = config['time_join_group']
+
+    time.sleep(time_join_group)
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
