@@ -5,6 +5,7 @@
 	"checar_base_ibge": true,
 	"apenas_ddd_55": true,
 	"numero_minimo_caracteres_nome": 2,
+	"group_to_join": "https://t.me/WorldStreamFinance",
 	"accounts": [
 		{
 			"phone": "+84XXXX",

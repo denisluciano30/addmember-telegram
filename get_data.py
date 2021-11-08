@@ -119,7 +119,12 @@ checar_base_ibge = config['checar_base_ibge']
 apenas_ddd_55 = config['apenas_ddd_55']
 numero_minimo_caracteres_nome = config['numero_minimo_caracteres_nome']
 
-accounts = config['accounts']
+
+with open('numeros.json', 'r', encoding='utf-8') as f:
+    numeros = json.loads(f.read())
+
+indice_account = config['indice_account']
+accounts = numeros['accounts'][indice_account]
 
 folder_session = 'session/'
 
