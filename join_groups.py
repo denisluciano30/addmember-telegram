@@ -47,8 +47,12 @@ with open('config.json', 'r', encoding='utf-8') as f:
 with open('numeros.json', 'r', encoding='utf-8') as f:
     numeros = json.loads(f.read())
 
-indice_account = config['indice_account']
-accounts = numeros['accounts'][indice_account]
+indices_account = config['indices_account']
+accounts = []
+
+for indice in indices_account:
+	accounts_indice = numeros['accounts'][indice]
+	accounts = accounts + accounts_indice
 
 for account in accounts:
     api_id = account['api_id']

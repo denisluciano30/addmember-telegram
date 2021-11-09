@@ -123,8 +123,12 @@ numero_minimo_caracteres_nome = config['numero_minimo_caracteres_nome']
 with open('numeros.json', 'r', encoding='utf-8') as f:
     numeros = json.loads(f.read())
 
-indice_account = config['indice_account']
-accounts = numeros['accounts'][indice_account]
+indices_account = config['indices_account']
+accounts = []
+
+for indice in indices_account:
+	accounts_indice = numeros['accounts'][indice]
+	accounts = accounts + accounts_indice
 
 folder_session = 'session/'
 
