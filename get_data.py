@@ -51,7 +51,7 @@ def get_data_user(client, group_id):
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
-    path_file = 'data/user/' + phone + "_" + str(group_id) + '.json'
+    path_file = 'data/base_user/users.json'
     
 
     for user in all_participants:
