@@ -24,7 +24,6 @@ def get_group(phone, api_id, api_hash):
 
 def get_data_group(client, phone):
     print('getting data ' + phone)
-    chats = []
     last_date = None
     chunk_size = 200
 
@@ -134,11 +133,24 @@ folder_session = 'session/'
 
 time_get_group = config['time_get_group']
 
-for account in accounts:
-    api_id = account['api_id']
-    api_hash = account['api_hash']
-    phone = account['phone']
-    print(phone)
-    get_group(phone, api_id, api_hash)
-        
-    time.sleep(time_get_group)
+
+# Obter os usuários de um cliente
+account_to_get_data = config['account_to_get_data']
+
+api_id = account_to_get_data['api_id']
+api_hash = account_to_get_data['api_hash']
+phone = account_to_get_data['phone']
+
+get_group(phone, api_id, api_hash)
+
+with open('data/base_user/users.json', 'r', encoding='utf-8') as f:
+    data_users = json.loads(f.read())
+    
+for acc in accounts:
+    phone_acc = acc['phone']
+    group_source_id_acc = config['group_source']
+    
+    path_file_acc = 'data/user/' + phone_acc + "_" + str(group_source_id_acc) + '.json'
+
+    with open(path_file_acc, 'w', encoding='utf-8') as f:
+        json.dump(data_users, f, indent=4, ensure_ascii=False)
