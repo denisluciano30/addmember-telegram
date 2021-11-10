@@ -132,9 +132,13 @@ for indice in indices_account:
 
 folder_session = 'session/'
 
+time_get_group = config['time_get_group']
+
 for account in accounts:
     api_id = account['api_id']
     api_hash = account['api_hash']
     phone = account['phone']
     print(phone)
     get_group(phone, api_id, api_hash)
+        
+    time.sleep(time_get_group)
