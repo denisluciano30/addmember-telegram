@@ -3,7 +3,7 @@ from telethon import sync, TelegramClient, events
 from telethon.tl.types import InputPeerChannel
 from telethon.tl.types import InputPeerUser
 from telethon.tl.functions.channels import InviteToChannelRequest
-from telethon.errors.rpcerrorlist import PeerFloodError, UserIdInvalidError, UserInvalidError, UserPrivacyRestrictedError, FloodWaitError
+from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError, FloodWaitError
 import time
 import traceback
 import datetime
@@ -27,7 +27,16 @@ logging.basicConfig(level=logging.WARNING)
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
 
-accounts = config['accounts']
+with open('numeros.json', 'r', encoding='utf-8') as f:
+    numeros = json.loads(f.read())
+
+indices_account = config['indices_account']
+accounts = []
+
+for indice in indices_account:
+	accounts_indice = numeros['accounts'][indice]
+	accounts = accounts + accounts_indice
+    
 print("Total account: " + str(len(accounts)))
 folder_session = 'session/'
 
@@ -174,11 +183,7 @@ while i < total_user:
         # not increate i
         continue
     except UserPrivacyRestrictedError:
-        print("Error Privacy") 
-    except UserIdInvalidError as e:
-        print("Error other")
-    except ValueError as e:
-        print("Error other")   
+        print("Error Privacy")
     except:
         print("Error other")
     # break

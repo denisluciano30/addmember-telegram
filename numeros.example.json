@@ -1,0 +1,25 @@
+{
+	"accounts": [
+        [
+            {
+                "phone": "+5511920031597",
+                "api_id": 123456,
+                "api_hash": "api_hash here"
+            }
+        ],
+        [
+            {
+                "phone": "+5534984237143",
+                "api_id": 123456,
+                "api_hash": "api_hash here"
+            }
+        ],
+        [
+            {
+                "phone": "+5584981304697",
+                "api_id": 123456,
+                "api_hash": "api_hash here"
+            }
+        ]
+    ]
+}

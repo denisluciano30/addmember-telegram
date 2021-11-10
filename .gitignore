@@ -1,9 +1,11 @@
 session/+55*
 data/group/+55*
-data/base_user/users.json
 data/user/+55*
 phone.txt
 current_count.txt
 errors.txt
 config.json
+numeros.json
 .idea
+openTelegramAll.BAT
+closeTelegram.BAT

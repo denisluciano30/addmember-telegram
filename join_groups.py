@@ -4,12 +4,16 @@ from telethon import sync, TelegramClient, events
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty, UserStatusOffline, UserStatusRecently, UserStatusLastMonth, \
     UserStatusLastWeek
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.types import InputPeerChannel
+from telethon.tl.types import PeerUser, PeerChat, PeerChannel
 import json
 from datetime import datetime, timedelta
 import time
+from unidecode import unidecode
+
 
 logging.basicConfig(level=logging.WARNING)
-
 
 def get_group(phone, api_id, api_hash):
     folder_session = 'session/'
@@ -18,46 +22,24 @@ def get_group(phone, api_id, api_hash):
     if not client.is_user_authorized():
         print('Login fail, need to run init_session')
     else:
-        get_data_group(client, phone)
+        join_group(client, phone)
 
 
-def get_data_group(client, phone):
+def join_group(client, phone):
     print('getting data ' + phone)
-    chats = []
-    last_date = None
-    chunk_size = 200
-    groups = []
 
-    query = client(GetDialogsRequest(
-        offset_date=last_date,
-        offset_id=0,
-        offset_peer=InputPeerEmpty(),
-        limit=chunk_size,
-        hash=0
-    ))
-    chats.extend(query.chats)
-    for chat in chats:
-        try:
-            if chat.megagroup is not None and chat.access_hash is not None:
-                groups.append(chat)
-        except:
-            continue
+    with open('config.json', 'r', encoding='utf-8') as f:
+        config = json.loads(f.read())
 
-    results = []
-    for group in groups:
-        try:
-            tmp = {
-                'group_id': str(group.id),
-                'access_hash': str(group.access_hash),
-                'title': str(group.title),
-            }
-            results.append(tmp)
+    # group to join
+    group_to_join = config['group_to_join']
 
-        except Exception as e:
-            print(e)
-            print('error save group')
-    with open('data/group/' + phone + '.json', 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
+    channel = client.get_entity(group_to_join)
+    client(JoinChannelRequest(channel))
+
+    time_join_group = config['time_join_group']
+
+    time.sleep(time_join_group)
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
@@ -72,12 +54,9 @@ for indice in indices_account:
 	accounts_indice = numeros['accounts'][indice]
 	accounts = accounts + accounts_indice
 
-folder_session = 'session/'
-
 for account in accounts:
     api_id = account['api_id']
     api_hash = account['api_hash']
     phone = account['phone']
     print(phone)
     get_group(phone, api_id, api_hash)
-    

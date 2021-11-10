@@ -46,13 +46,20 @@ Copy file config.json from config.example.json
 
 * Step 4: run `python get_groups.py` to get data of groups
 
-Esse passo será para obter o nome dos grupos para cada account. O objetivo é não ler os os users para todos os grupos, pois está demorando muito tempo.
+Esse passo será para obter o nome dos grupos para cada account. O objetivo é não ler os users para todos os grupos, pois estava demorando muito tempo.
 
 Após esse passo já defina os grupos target e source, pois só será obtido os usuários deles
 ```
 	"group_target": id aqui, -> seu grupo
 	"group_source": id aqui, -> de qual vai pegar os membros
 ```
+
+* Step 4.2 run `python join_groups.py` to join in groups defined in config.py
+ In file config.py define 
+ ```
+	"group_to_join": "link of group that you want to join",
+ ```
+ then run command. To not be strange in group, have 2 minutes delay each iteration
 
 * Step 5: run `python get_data.py` to get data of user and save file in folder `group`
 
