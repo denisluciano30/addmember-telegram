@@ -36,6 +36,9 @@ accounts = []
 for indice in indices_account:
 	accounts_indice = numeros['accounts'][indice]
 	accounts = accounts + accounts_indice
+
+
+time_addmember = config['time_addmember']
     
 print("Total account: " + str(len(accounts)))
 folder_session = 'session/'
@@ -166,12 +169,13 @@ while i < total_user:
         print('Add member '+ user['user_id'] +' success')
         count_add += 1
 
-        print('sleep: ' + str(120 / total_client))
-        time.sleep(120 / total_client)
-        
-        # Essa alteração, faz com que ele sempre durma por 120s, independente do número de clientes adicionando
-        # print('sleep: ' + str(120))
-        # time.sleep(120) 
+        # Caso o usuário defina um tempo de delay, será usado ele.
+        if time_addmember == 0:
+            print('sleep: ' + str(120 / total_client))
+            time.sleep(120 / total_client)
+        else:
+            print('sleep: ' + str(time_addmember))
+            time.sleep(time_addmember)
 
     except PeerFloodError as e:
         print("Error Fooling cmnr")

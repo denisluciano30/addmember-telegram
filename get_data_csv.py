@@ -8,6 +8,7 @@ import json
 from datetime import datetime, timedelta
 import time
 from unidecode import unidecode
+import csv
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -55,13 +56,24 @@ def get_data_group(client, phone):
 
 def get_data_user(client, group):
 
-    all_participants = client.get_participants(group, aggressive=True)
+    with open('config.json', 'r', encoding='utf-8') as f:
+        config = json.loads(f.read())
+
+    all_participants = client.get_participants(group.id, aggressive=True)
     results = []
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
     path_file = 'data/user/' + phone + "_" + str(group.id) + '.json'
+
+    # open the file in the write mode
+    new_file = open('members.csv', 'w', newline='', encoding="utf8")
     
+    # create the csv writer
+    writer = csv.writer(new_file)
+
+    header = ['username','user id','access hash','name','group','group id']
+    writer.writerow(header)
 
     for user in all_participants:
 
@@ -100,18 +112,29 @@ def get_data_user(client, group):
                     date_online = user.status.was_online
 
                 date_online_str = date_online.strftime("%Y%m%d")
-            tmp = {
-                'user_id': str(user.id),
-                'access_hash': str(user.access_hash),
-                'username': str(user.username),
-                'first_name': str(user.first_name),
-                "date_online": date_online_str
-            }
-            results.append(tmp)
+
+            if config['from_date_active'] == 'online' and date_online_str != 'online':
+                continue
+            
+            if date_online_str  != 'online' and int(date_online_str) < int(config['from_date_active']):
+                continue
+
+            line = []
+            line.append(str(user.username))
+            line.append(str(user.id))
+            line.append(str(user.access_hash))
+            line.append(str(user.first_name))
+            line.append(str(group.title))
+            line.append(str(group.id))
+
+
+            writer.writerow(line)
+        
         except:
             print("Error get user")
-    with open(path_file, 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
+
+    # close the file
+    new_file.close()
 
 
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -142,11 +165,12 @@ folder_session = 'session/'
 
 time_get_group = config['time_get_group']
 
-for account in accounts:
-    api_id = account['api_id']
-    api_hash = account['api_hash']
-    phone = account['phone']
-    print(phone)
-    get_group(phone, api_id, api_hash)
-        
-    time.sleep(time_get_group)
+account_to_get_data = config['account_to_get_data']
+
+api_id = account_to_get_data['api_id']
+api_hash = account_to_get_data['api_hash']
+phone = account_to_get_data['phone']
+
+print(phone)
+get_group(phone, api_id, api_hash)
+    
