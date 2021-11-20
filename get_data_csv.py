@@ -100,6 +100,10 @@ def get_data_user(client, group):
             if primeiro_nome_telegram_sem_acento not in nomes_ibge_2010:
                 continue
         
+        # Não inserindo com username = 'None'
+        if config['nao_add_none'] and str(user.username) == 'None':
+            continue
+        
         try:
             if isinstance(user.status, UserStatusRecently):
                 date_online_str = 'online'
