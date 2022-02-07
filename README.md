@@ -40,6 +40,14 @@ Copy file config.json from config.example.json
 `group_target` and `group_source`: after run get_data.py and check file in data/group
 `accounts`: list account Telegram; each phone, create app in https://my.telegram.org/apps and have api_id, api_hash
 
+Modificação
+
+Agora os números ficam em um arquivo separado e são separados por conjunto. Esse conjunto é um array. Com isso deve-se no arquivo de configuração selecionar o conjunto que deseja
+
+obs: O conjunto 0 deve ser apenas um único número que é usado em alguns scripts, por exemplo para fazer o scrap. Isso implica que vc poderá reuzar ele em outro conjunto, pois a ideia é não selecionar o conjunto 0 para adicionar membros por exemplo.
+
+
+
 * Step 3: After have file `config.json`, run `python init_session.py`, enter phone and the code you received
 
 ![Init session](images/step1.png)
