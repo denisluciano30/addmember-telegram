@@ -1,3 +1,4 @@
+from itertools import count
 from telethon import TelegramClient, connection
 import logging
 from telethon import sync, TelegramClient, events
@@ -55,13 +56,13 @@ def get_data_group(client, phone):
 
 def get_data_user(client, group):
 
-    all_participants = client.get_participants(group, aggressive=True)
+    all_participants = client.get_participants(group, aggressive=True, limit=5000)
+    
     results = []
     today = datetime.now()
     last_week = today + timedelta(days=-7)
     last_month = today + timedelta(days=-30)
-    path_file = 'data/user/' + phone + "_" + str(group.id) + '.json'
-    
+    path_file = 'data/user/' + phone + "_" + str(group.id) + '.json'    
 
     for user in all_participants:
 

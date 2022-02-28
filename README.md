@@ -102,3 +102,24 @@ Done!
 
 ## Ps: 
 Because some people interesting my repository create some issue, inbox Telegram. I don't have time to solve it, so I update your script to be good. I will open issue and try to resolved it. But some thing about basic language `python`, please search Internet before create issue! Thanks!
+
+
+## Denis's observacoes
+
+Depois de algumas atualizações do telegram, não tá sendo possível obter todos os membros de um grupo.
+
+Com isso, o pessoal do telethon lançou uma atualização na versão develop
+
+https://imgur.com/a/yf7Rcjm
+
+Com isso, enquanto não está oficialmente na versão develop
+
+```
+pip install --upgrade https://github.com/LonamiWebs/Telethon/archive/master.zip
+```
+
+Isso aí está funcionando para um número maior de membros. Testei até com 5k membros. Além disso, nessa atualização parece que necessita remover o aggressive=True, pois deu erro ao usar
+
+```
+all_participants = client.get_participants(group, limit=5000)
+```

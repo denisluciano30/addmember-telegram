@@ -59,7 +59,7 @@ def get_data_user(client, group):
     with open('config.json', 'r', encoding='utf-8') as f:
         config = json.loads(f.read())
 
-    all_participants = client.get_participants(group.id, aggressive=True)
+    all_participants = client.get_participants(group, limit=5000)
     results = []
     today = datetime.now()
     last_week = today + timedelta(days=-7)
@@ -168,13 +168,12 @@ for indice in indices_account:
 folder_session = 'session/'
 
 time_get_group = config['time_get_group']
-
-account_to_get_data = config['account_to_get_data']
-
-api_id = account_to_get_data['api_id']
-api_hash = account_to_get_data['api_hash']
-phone = account_to_get_data['phone']
-
-print(phone)
-get_group(phone, api_id, api_hash)
     
+for account in accounts:
+    api_id = account['api_id']
+    api_hash = account['api_hash']
+    phone = account['phone']
+    print(phone)
+    get_group(phone, api_id, api_hash)
+        
+    time.sleep(time_get_group)
