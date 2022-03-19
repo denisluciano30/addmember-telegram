@@ -1,19 +1,15 @@
 {
-	"group_target": 123456,
-	"group_source": 123456,
-	"from_date_active": "online | 20211223",
-	"checar_base_ibge": true,
-	"apenas_ddd_55": true,
-	"numero_minimo_caracteres_nome": 2,
+	"group_target": 2131231231,
+	"group_source": 1341231231,
+	"from_date_active": "20220201",
+	"checar_base_ibge": false,
+	"apenas_ddd_55": false,
+	"numero_minimo_caracteres_nome": 0,
 	"nao_add_none": true,
 	"group_to_join": "https://t.me/...",
-	"indices_account": [6],
+	"groups_to_get_data": [1341231231],
+	"indices_account": [0],
 	"time_join_group": 0,
 	"time_get_group": 0,
-	"time_addmember": 0,
-	"account_to_get_data":{
-		"phone": "",
-		"api_id": 12345,
-		"api_hash": ""
-	}
+	"time_addmember": 0
 }

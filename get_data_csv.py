@@ -1,3 +1,4 @@
+from unittest import result
 from telethon import TelegramClient, connection
 import logging
 from telethon import sync, TelegramClient, events
@@ -28,12 +29,13 @@ def get_data_group(client, phone):
     chats = []
     last_date = None
     chunk_size = 200
+    groups = []
 
     with open('config.json', 'r', encoding='utf-8') as f:
         config = json.loads(f.read())
 
 
-    group_source_id = config['group_source']
+    groups_to_get_data = config['groups_to_get_data']
 
     query = client(GetDialogsRequest(
         offset_date=last_date,
@@ -46,25 +48,24 @@ def get_data_group(client, phone):
     chats.extend(query.chats)
     for chat in chats:
         try:
-            if chat.megagroup is not None and chat.access_hash is not None and group_source_id == chat.id:
-                group = chat
+            if chat.megagroup is not None and chat.access_hash is not None and chat.id in groups_to_get_data :
+                groups.append(chat)
         except:
             continue
-
-    get_data_user(client, group)
-
-
-def get_data_user(client, group):
-
-    with open('config.json', 'r', encoding='utf-8') as f:
-        config = json.loads(f.read())
-
-    all_participants = client.get_participants(group, limit=5000)
+        
     results = []
-    today = datetime.now()
-    last_week = today + timedelta(days=-7)
-    last_month = today + timedelta(days=-30)
-    path_file = 'data/user/' + phone + "_" + str(group.id) + '.json'
+
+    for group in groups:
+        try:
+
+            if group.megagroup == True:
+                results.append(get_data_user(client, group))
+
+                
+        except Exception as e:
+            print(e)
+            print('error save group')
+
 
     # open the file in the write mode
     new_file = open('members.csv', 'w', newline='', encoding="utf8")
@@ -75,6 +76,28 @@ def get_data_user(client, group):
     header = ['username','user id','access hash','name','group','group id']
     writer.writerow(header)
 
+    # write in file the results
+
+
+    # close the file
+    new_file.close()
+
+
+    # with open('data/group/' + phone + '.json', 'w', encoding='utf-8') as f:
+    #     json.dump(results, f, indent=4, ensure_ascii=False)
+
+
+def get_data_user(client, group):
+
+    with open('config.json', 'r', encoding='utf-8') as f:
+        config = json.loads(f.read())
+
+    all_participants = client.get_participants(group, limit=5000)
+    today = datetime.now()
+    last_week = today + timedelta(days=-7)
+    last_month = today + timedelta(days=-30)
+
+    result = []
     for user in all_participants:
 
         # Número mínimo caracteres nome
@@ -86,9 +109,6 @@ def get_data_user(client, group):
         if apenas_ddd_55:
             if user.phone != None and user.phone[0:1] != '55':
                 continue
-        
-        # Verificando a última vez online se é >= a data nas configurações
-        # TO-DO (Fazer a checagem por aqui, assim já filtra para não verificar no add)
 
         #verificando se é um nome que contém na base do ibge
         if checar_base_ibge:
@@ -122,24 +142,22 @@ def get_data_user(client, group):
             
             if date_online_str  != 'online' and int(date_online_str) < int(config['from_date_active']):
                 continue
+            
 
             line = []
-            line.append(str(user.username))
-            line.append(str(user.id))
-            line.append(str(user.access_hash))
-            line.append(str(user.first_name))
-            line.append(str(group.title))
-            line.append(str(group.id))
+            line['username'] = str(user.username)
+            line['user_id'] = str(user.id)
+            line['access_hash'] = str(user.access_hash)
+            line['first_name'] = str(user.first_name)
+            line['title'] = str(user.title)
+            line['group_id'] = str(group.id)
 
+            result.append(line)
 
-            writer.writerow(line)
-        
         except:
             print("Error get user")
 
-    # close the file
-    new_file.close()
-
+    return result
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.loads(f.read())
